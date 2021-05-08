@@ -1,0 +1,21 @@
+{% extends 'advito/base_advito.html' %}
+
+{% block content %}
+  <div class="cards" style="display:flex; flex-wrap: wrap;">
+    {% if posts %}
+      <ul class="posts" style="display:flex; flex-wrap:wrap;">
+        {% for post in posts %}
+          <li class="post"  style="max-width:500px; padding:10px; border: solid 1px; margin-right: 20px; margin-bottom:20px;">
+            <a href="{% url 'advito:post_detaile' post.id %}">
+              <h3>{{ post.name_descript }}<h3>
+              <p>{{ post.date_pub }}</p>
+              <p class="img"><img style="width:100%;" alt="post image" src="{{ post.image.url }}"></p>
+              <p class="price">{{ post.price }} pуб.</p>
+              <p class="text">{{ post.description | truncatewords:5 }}</p>
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+    </div>
+{% endblock  %}

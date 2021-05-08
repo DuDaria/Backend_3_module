@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+	  <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+      {% block title %}
+        Advito
+      {% endblock  %}
+    </title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+  </head>
+  <body>
+    <nav class="navigation" style="display:flex; background-color: #8DCFFF; justify-content: space-between;">
+      <div class="container-nav" style="display:flex;">
+        <div class="navbar">
+          <ul class="navbar-nav" style="display:flex;">
+            <li class="nav-item" style="margin-right:20px;">
+              <img href="{% static 'img/icon.png' %}" alt="Иконка сайта">
+            </li>
+            <li class="nav-item" style="margin-right:20px;">
+              <a class="nav-link" aria-current="page" href="{% url 'advito:index' %}">Главная</a>
+            </li>
+            <li class="nav-item" style="margin-right:20px;">
+              <a class="nav-link" href="#">О нас</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Помощь</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="navbar">
+        <ul class="navbar-nav" style="display:flex;">
+            <li class="nav-item" style="margin-right:20px">
+              <a class="nav-link" href="#">Вход и регистрация</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Разместить объявление</a>
+            </li>
+          </ul>
+      </div>
+    </nav>
+
+    <div class="index-form" data-marker="search-form" style="display:flex; border: solid 1px">
+      <div class="category">
+        <div class="category-select">
+          <select name="category_id" class="select" style="height: 21px;">
+            <option>
+              <a href="{% url 'advito:index' %}">Любая категория</a>
+            </option>
+            {% for category in categories %}
+              <option active class="category-select-group">
+                <a  href="/advito/category/{{ category.id }}"> 
+                  {{ category.name_category }}
+                </a>
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+        <div class="form" style="margin-left: 20px;">
+            <input type="text" placeholder="Поиск по объявлениям" maxlength="100" class="suggest">
+          </div>
+          <div class="form-button">
+            <button class="button-element">
+              <span class="button-text">Найти</span>
+            </button>
+        </div>
+      </div>
+      {% for category in categories %}
+        <a  href="/advito/category/{{ category.id }}" style="padding-right:20px"> 
+          {{ category.name_category }}
+        </a>
+      {% endfor %}
+    </div>
+    {% block content %}
+    Ther is no any content
+    {% endblock  %}
+  </body>
+</html>

@@ -15,8 +15,19 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.contrib.staticfiles.urls import static
+from blogproject import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('advito.urls'))
+    path('advito/', include('advito.urls'))
 ]
+
+# STATIC_URLS
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+# MEDIA_URLS
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# STATIC_URL - путь статичных файлов
+# STATIC_ROOT - в какой папке находятся статичные файлы
+# Функцией static регистрирует все пути

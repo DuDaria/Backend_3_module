@@ -18,8 +18,6 @@ class Profile(models.Model):
     avatar = models.ImageField(verbose_name="Фото пользователя", upload_to=user_avatar_path)
     town = models.CharField(verbose_name="Город", null=True, blank=True, max_length=30)
     subscribers = models.ManyToManyField(User, blank=True, verbose_name="Подписчики пользователя", related_name='subscribers') 
-    reviews = models.ManyToManyField(User, blank=True, verbose_name="Отзывы о пользователе", related_name='reviews') 
-    messages = models.ManyToManyField(User, blank=True, verbose_name="Сообщения пользователю", related_name='messages') 
 
     def __str__(self):
         return f'Profile: {self.user}'
@@ -35,14 +33,13 @@ class CategoryPost(models.Model):
 
 class Post(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
-    category = models.ForeignKey(CategoryPost, on_delete=models.CASCADE, verbose_name="Категория")
+    category = models.ForeignKey(CategoryPost, on_delete=models.CASCADE, verbose_name="Категория", related_name='category')
     price = models.FloatField(verbose_name="Цена", blank=True)
     name_descript = models.CharField(max_length=200,  blank=True, verbose_name="Название объявления")
     description = models.TextField(max_length=1000, blank=True, verbose_name="Описание объявления")
     image = models.ImageField(upload_to=user_directory_path, verbose_name="Фото объявления")
     date_pub = models.DateTimeField(default=timezone.now, verbose_name="Дата объявления")
-    date_adit = models.DateTimeField(default=timezone.now, verbose_name="Дата редактирования")
-    user = models.ManyToManyField(User, blank=True, related_name='user') 
+    date_edit = models.DateTimeField(default=timezone.now, verbose_name="Дата редактирования")
     
     def __str__(self):
         return f'Post: {self.name_descript}; {self.category}; Autor: {self.author}'
@@ -68,23 +65,23 @@ class Comment(models.Model):
 class Review(models.Model):
     """Отзыв о пользователе"""
     author = models.ForeignKey(Profile, on_delete=models.CASCADE, verbose_name="Автор отзыва")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Кому отзыв")
+    to_whom = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Кому отзыв")
     rating = models.IntegerField(verbose_name="Оценка", null=True, blank=True)
     text = models.TextField(verbose_name="Отзыв", blank=True, max_length=300)
     date_pub = models.DateTimeField(default=timezone.now, verbose_name="Дата создания")
     date_edit = models.DateTimeField(default=timezone.now, verbose_name="Дата редактирования")
 
     def __str__(self):
-        return f'Autor: {self.author}; User: {self.user}; Date_publish: {self.date_pub}'
+        return f'Autor: {self.author}; To whom: {self.to_whom}; Date_publish: {self.date_pub}'
     
 
 class Message(models.Model):
     """Сообщение"""
     author = models.ForeignKey(Profile, on_delete=models.CASCADE, verbose_name="Автор сообщения")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Кому сообщение")
+    to_whom = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Кому сообщение")
     text = models.TextField(verbose_name="Сообщение", blank=True, max_length=300)
     date_pub = models.DateTimeField(default=timezone.now, verbose_name="Дата создания")
     date_edit = models.DateTimeField(default=timezone.now, verbose_name="Дата редактирования")
 
     def __str__(self):
-        return f'Autor: {self.author}; User: {self.user}; Date_publish: {self.date_pub}'
+        return f'Autor: {self.author}; To whom: {self.to_whom}; Date_publish: {self.date_pub}'

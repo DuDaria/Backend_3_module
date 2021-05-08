@@ -1,0 +1,14 @@
+{% extends 'advito/base_advito.html' %}
+{% block title %}
+  {{ post.name_descript }}-{{ block.super }}
+{% endblock  %}
+
+{% block content %}
+  <p>Автор: {{ post.author }}</p>
+  <p>{{ post.date_pub }}</p>
+  <p class="img"><img style="width:50%;" alt="post image" src="{{ post.image.url }}"></p>
+  <p class="price">{{ post.price }} p</p>
+  <p class="text">{{ post.description }}</p>
+  <p><a href="#" class="btn">Написать сообщение</a></p>
+  <p><a href="#" class="btn">Добавить в избранное</a></p>
+{% endblock  %}
