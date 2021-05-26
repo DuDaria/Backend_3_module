@@ -1,10 +1,14 @@
-{% extends 'advito/base_advito.html' %}
-{% load static %}
+{% extends 'base.html' %}
+{% block title %}
+  Избранное
+{% endblock  %}
+
 {% block content %}
+<h1>Любимые посты</h1>
   <div class="cards">
-    {% if posts %}
+    {% if add_posts %}
       <ul class="posts">
-        {% for post in posts %}
+        {% for post in add_posts %}
           <li class="post">
             <a href="{% url 'advito:post_detail' post.id %}">
               <h3>{{ post.name_descript }}</h3>
@@ -18,5 +22,4 @@
       </ul>
     {% endif %}
     </div>
-    <button>Показать еще</button>
 {% endblock  %}

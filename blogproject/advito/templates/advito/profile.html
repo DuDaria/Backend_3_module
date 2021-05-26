@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  {% if profile_with_errors %}
+    <p>Не корректный ввод данных</p>
+    <p>Исправьте ошибки!</p>
+  {% endif %}
+
+  {% if profile_was_correct %}
+    <p>Профиль отредактирован успешно</p>
+  {% endif %}
+  <div class="profile-main" >
+    <div>
+      <form class="profile__form" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ profile }}
+        <button type="profile-button__submit" style="margin-top: 20px; width: 120px;">Сохранить</button>
+      </form>
+    </div>
+    <div>
+      <h3>Персональные данные : </h3>
+      <a class="personal-info__href" href="/advito/{{ user }}/profile/personal_info">Редактировать;</a>
+    </div>
+  </div>
+{% endblock  %}

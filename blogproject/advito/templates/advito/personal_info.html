@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="personal-info">
+        <h2>Персональная информация</h2>
+        <p>Псевдоним:&nbsp<span>{{ name }};</span></p>
+        <p>Имя:&nbsp<span>{{ first_name }};</span></p>
+        <p>Фамилия:&nbsp<span>{{ last_name }};</span></p>
+        <p>Почта:&nbsp<span>{{ email }};</span></p>
+        <form class="personal-info__form" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ personal_info }}
+            <button type="personal-info-button__submit" style="margin-top: 20px; width: 120px;">Сохранить</button>
+        </form>
+    </div>
+{% endblock  %}

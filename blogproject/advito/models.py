@@ -20,7 +20,7 @@ class Profile(models.Model):
     subscribers = models.ManyToManyField(User, blank=True, verbose_name="Подписчики пользователя", related_name='subscribers') 
 
     def __str__(self):
-        return f'Profile: {self.user}'
+        return f'{self.user}'
 
 
 class CategoryPost(models.Model):
@@ -28,7 +28,7 @@ class CategoryPost(models.Model):
     name_category = models.CharField(verbose_name="Категория", max_length=100)
 
     def __str__(self):
-        return f'Category: {self.name_category}'
+        return f'{self.name_category}'
 
 
 class Post(models.Model):
