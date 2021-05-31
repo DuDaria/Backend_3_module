@@ -1,4 +1,9 @@
 /* Global styles */
+html {
+  background-color: #E7E5E5;
+  box-sizing: border-box; 
+}
+
 body {
   font-size: 18px;
 }
@@ -12,8 +17,8 @@ li {
   list-style-type: none
 }
 
-html { 
-  box-sizing: border-box; 
+.img {
+  width: 100%;
 }
 
 img { 
@@ -90,7 +95,7 @@ img {
 }
 
 .profile-exit__href {
-  background-color: rgb(161, 161, 214);
+  background-color:#cfedff;
   border: solid 1px;
   border-radius: 2px;
   padding: 1px 5px 1px 5px;
@@ -132,4 +137,15 @@ img {
 
 .footer__logo-svg {
   fill: #FFFFFF;
+}
+
+.profile__img {
+  width: 100%;
+  max-width: 300px;
+}
+
+.profile-update__form{
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
 }

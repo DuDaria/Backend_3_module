@@ -93,6 +93,7 @@
   font-weight: bold;
   color: #ffffff;
   max-width: 250px;
+  margin-bottom: 10px;
 }
 
 .message-button:hover, 

@@ -17,9 +17,9 @@
       <p>Телефон: {{ profile.phone }}</p>
 
       {% if post.author != user %}
-        <p><a class="message-button" href="#" class="btn">Написать сообщение</a></p>
         <form class="add-favorite__form" method="POST">
           {% csrf_token %}
+          <button class="message-button" type="submit" name="button_send_message">Написать сообщение</button><br>
           <button class="add-vaforite-button" type="submit" name="button_add_post">Добавить в избранное</button>
         </form>
       {% endif %}
@@ -33,16 +33,20 @@
   {% if post.author != user %}
     <div class="comments">
       <h2>Комментарии к посту:</h2>
-      <ul>
-        {% for comment in comments %}
-          <li>
-            <p>Автор: <a href="#">{{ comment.author }}</a></p>
-            <p>{{ comment.date_publish }}</p>
-            <p>{{ comment.text }}</p>
-            <hr>
-          </li>
-        {% endfor %}
-      </ul>
+      {% if comments %}
+        <ul>
+          {% for comment in comments %}
+            <li>
+              <p>Автор: <a href="#">{{ comment.author }}</a></p>
+              <p>{{ comment.date_publish }}</p>
+              <p>{{ comment.text }}</p>
+              <hr>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p><i>Пока комментариев нет</i></p>
+      {% endif %}
       <form class="comment__form" method="POST">
         {% csrf_token %}
         {{ comment_form.text }}

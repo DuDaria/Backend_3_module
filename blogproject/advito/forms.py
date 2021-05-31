@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User 
-from .models import Post, Profile, FavoritePost, Comment, Message
+from .models import Post, Comment, Message
 
 
 class PostForm(forms.ModelForm):
@@ -41,61 +41,6 @@ class PostForm(forms.ModelForm):
         }
 
 
-class ProfileForm(forms.ModelForm):
-
-    class Meta:
-        model = Profile
-        
-        fields = ['birth_date', 'about', 'phone', 'avatar', 'town']
-        
-        labels = {
-            'birth_date': 'День рождения',
-            'about': 'О себе', 
-            'phone': 'Телефон', 
-            'avatar': 'Аватар', 
-            'town': 'Город', 
-        }
-
-        widjets = {
-            'birth_date': forms.Textarea(),
-
-            'about': forms.Textarea(attrs={
-                'class': 'form__', 
-                'placeholder': 'Описание поста',
-            }),
-            'phone': forms.Textarea(), 
-            
-            'town': forms.Textarea(), 
-            
-            'avatar': forms.ClearableFileInput(attrs={
-                'class': 'form__file', 
-                'type': 'file',
-            }),
-        }
-
-class PersonalForm(forms.ModelForm):
-    
-    class Meta:
-        model = User
-
-        fields = ['username', 'first_name', 'last_name', 'password', 'email']
-
-        labels = {
-            'username': 'Новый псевдоним',
-            'first_name': 'Новое Имя', 
-            'last_name': 'Новая Фамилия', 
-            'password': 'Новый Пароль', 
-            'email': 'Новая Почта',
-        }
-
-        widjets = {
-            'username': forms.CharField(initial='Your name'),
-            'first_name': forms.CharField(),
-            'last_name': forms.CharField(), 
-            'password': forms.PasswordInput(), 
-            'email': forms.EmailField(),
-        } 
-
 class CommentForm(forms.ModelForm):
     
     class Meta:
@@ -122,13 +67,13 @@ class MessageForm(forms.ModelForm):
         fields =['text']
 
         labels = {
-            'text': 'Текст комментария',
+            'text': 'Текст сообщения',
         }
 
         widjets = {
             'text': forms.Textarea(attrs={
                 'class': 'form-control',
-                'placeholder': 'Текст комментария'
+                'placeholder': 'Текст сообщения'
             }),
         } 
 

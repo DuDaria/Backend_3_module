@@ -4,11 +4,12 @@
 {% endblock  %}
 
 {% block content %}
-<h1>Любимые посты</h1>
+<h1>Избранные объявления</h1>
   <div class="cards">
-    {% if add_posts %}
+    {% if add_posts %}    
       <ul class="posts">
         {% for post in add_posts %}
+          {% with post=post.post %}
           <li class="post">
             <a href="{% url 'advito:post_detail' post.id %}">
               <h3>{{ post.name_descript }}</h3>
@@ -18,8 +19,11 @@
               <p class="text">{{ post.description | truncatewords:5 }}</p>
             </a>
           </li>
+          {% endwith %}
         {% endfor %}
       </ul>
     {% endif %}
     </div>
+
+    
 {% endblock  %}

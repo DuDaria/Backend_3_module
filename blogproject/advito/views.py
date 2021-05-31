@@ -14,8 +14,8 @@ from django.urls import reverse
 from .models import (Post, Comment, Profile, 
     CategoryPost, FavoritePost, Review, Message
 )
-from .forms import (PostForm, ProfileForm, PersonalForm, 
-    CommentForm, MessageForm
+from .forms import (PostForm, CommentForm, 
+    MessageForm
 )
 
 
@@ -42,6 +42,7 @@ class PostDetailView(DetailView):
     pk_url_kwarg = 'post_id'
     template_name = 'advito/post_detail.html'
     comment_form_class = CommentForm
+    favpost_class=FavoritePost
     context={}
     
     def get(self, request, post_id, *args, **kwargs):
@@ -56,7 +57,6 @@ class PostDetailView(DetailView):
 
         return self.render_to_response(context)
         
-    list = []
     @method_decorator(login_required(login_url='/advito/login/'))
     def post(self, request, post_id, *args, **kwargs):
         post = get_object_or_404(Post, id=post_id)
@@ -72,10 +72,11 @@ class PostDetailView(DetailView):
         
         elif 'button_add_post' in request.POST:
             if request.user:
-                self.list.append(post)
-                print(self.list)
-                print("Hello")
-                return redirect(reverse('advito:favorite_post'))
+                favpost_add = self.favpost_class(id=post_id, author_id=post.author.id)
+                # obj = favpost_add.save()
+                # obj.save()
+                print(favpost_add)
+                return redirect(request.META.get('HTTP_REFERER'), request)
         else:
             print("Форма не валидна!")
             return render(request, self.template_name, context={
@@ -100,7 +101,6 @@ class PostEditView(UpdateView):
     
     def get_success_url(self):
         post_id = self.kwargs[self.pk_url_kwarg]
-        print(post_id)
         return reverse('advito:post_detail', args=(post_id, ))
 
 
@@ -137,12 +137,11 @@ class PostDeleteView(DeleteView):
     # переопределим метод (получение ссылки advito:post_delete_success)
     def get_success_url(self):
         post_id = self.kwargs[self.pk_url_kwarg]
-        print(post_id)
         return reverse('advito:post_delete_success', args=(post_id, ))
 
 
 class FavoritePostView(ListView):
-    model = Post
+    model = FavoritePost
     post_form_class = PostForm
     categories = CategoryPost.objects.all()
     template_name = 'advito/favorite_post.html'
@@ -150,11 +149,22 @@ class FavoritePostView(ListView):
     extra_context = {'categories':categories, }
     context = {}
 
-    # метод возвращает строчку
-    def get_queryset(self):
-        return self.model.objects.filter(date_pub__year=2021).order_by('-date_pub')[:15]
-    
+    # def get_queryset(self):
+    #     if self.request.user.is_authenticated:
+    #         return self.model.objects.filter(
+    #             post__date_pub__year=2021, 
+    #             author=self.request.user.user_profile
+    #         ).order_by('-post__date_pub')[:15]
+    #     else:
+    #         return []
 
+    # def get_queryset(self):
+    #     return self.request.user.user_profile.favoritepost_set.filter(post__date_pub__year=2021, ).order_by('-post__date_pub')[:15]
+
+    def get_queryset(self):
+        return self.model.objects.all()
+
+    
 def category_post(request, category_id):
     name = request.user.username
     category_queryset = Post.objects.filter(category=category_id, date_pub__year=2021).order_by('-date_pub')[:10]
@@ -165,26 +175,9 @@ def category_post(request, category_id):
     return render(request, template_name, context)
 
 
-def profile(request):
-    name = request.user.username
-    template_name = 'advito/profile.html'
-    user = request.user.id
-
-    context = {'profile': ProfileForm(), 'name': name, 'user':user}
-    return render(request, template_name, context)
-
-
-def personal_info(request, user_id):
-    name = request.user.username 
-    first_name = request.user.first_name
-    email = request.user.email
-    template_name = 'advito/personal_info.html'
-
-    context = {
-        'personal_info': PersonalForm(), 
-        'name': name, 
-        'email': email, 
-        'first_name': first_name,
-    }
-    return render(request, template_name, context)
-
+class MessageView(CreateView):
+    categories = CategoryPost.objects.all()
+    extra_context = {'categories':categories, }
+    template_name = 'advito/post_detail.html'
+    comment_form_class = MessageForm
+    context={}

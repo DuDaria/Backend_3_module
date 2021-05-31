@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h1>Мои комментарии:</h1>
+    {% if user.comment %}
+        <p>Отображение комментариев</p>
+    {% else %}
+        <i>Пока комментариев нет</i>
+    {% endif %}
+{% endblock  %}

@@ -85,7 +85,7 @@
             {% else %}
             <span>{{ user }};</span>
               <span>&nbsp Редактировать: &nbsp</span>
-              <a class="profile__href" href="/advito/profile/">My Profile;</a>
+              <a class="profile__href" href="{% url 'advito:profile' user.id %}">My Profile;</a>
               <a class="profile-exit__href" href="{% url 'advito:logout' %}">Выход</a>
             {% endif %}
           </div>

@@ -18,5 +18,8 @@
       </ul>
     {% endif %}
     </div>
-    <button>Показать еще</button>
+    <form class="post-next__form" method="POST">
+      {% csrf_token %}
+      <button class="button" type="submit" name="post-next__button">Показать еще</button>
+    </form>
 {% endblock  %}

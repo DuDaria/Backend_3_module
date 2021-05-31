@@ -80,14 +80,14 @@ class UpdateProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
 
-        fields = ['birth_date', 'about', 'phone', 'avatar', 'town']
+        fields = ['avatar', 'birth_date', 'phone', 'town', 'about']
 
         labels = {
-            'birth_date': 'День рождения',
-            'about': 'О себе', 
-            'phone': 'Телефон', 
             'avatar': 'Фото профиля', 
+            'birth_date': 'День рождения',
+            'phone': 'Телефон', 
             'town': 'Город', 
+            'about': 'О себе', 
         }
 
         widjets = {
