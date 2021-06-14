@@ -57,11 +57,6 @@ class IndexView(ListView):
 
         return render(request, self.template_name, context)
 
-    # get_queryset - Используется ListView s - он определяет список объектов, которые 
-    # вы хотите отобразить. По умолчанию он просто даст вам все для указанной вами модели. 
-    # def get_queryset(self):
-    #     # return self.model.objects.filter(date_pub__year=2021).order_by('-date_pub')[:15]
-    #     return self.page
 
 def support(request):
     template_name = 'advito/support.html'
