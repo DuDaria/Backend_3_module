@@ -2,6 +2,7 @@
 html {
   background-color: #E7E5E5;
   box-sizing: border-box; 
+  font-family: 'Times New Roman', serif;
 }
 
 body {
@@ -17,9 +18,9 @@ li {
   list-style-type: none
 }
 
-.img {
+/* .img {
   width: 100%;
-}
+} */
 
 img { 
   max-width: 100%;
@@ -69,7 +70,7 @@ img {
   width: 120px;
 }
 
-.nav-link{
+.nav-link {
   align-self: center;
   font-weight: bold;
   color: #000000;
@@ -102,7 +103,13 @@ img {
   margin: 1px 20px 1px 10px;
 }
 
-.passres__href{
+.profile-exit__href:hover,
+.profile-exit__href:active,
+.profile-exit__href:focus {
+  opacity: 0.8;
+}
+
+.passres__href {
   margin-top: 20px;
 }
 
@@ -112,13 +119,13 @@ img {
   border-top: solid 1px;
 }
 
-.footer-social{
+.footer-social {
   margin: 0 auto;
 }
 
 .footer-social__list {
   display: flex;
-  padding: 0;
+  margin: 0 auto;
 }
 
 .footer-social__item {
@@ -128,6 +135,12 @@ img {
   height: 48px;
   margin: 3px;
   cursor: pointer;
+}
+
+.footer-social__item:hover, 
+.footer-social__item:focus,
+.footer-social__item:active {
+  opacity: 0.8;
 }
 
 .footer-social__link {
@@ -142,10 +155,55 @@ img {
 .profile__img {
   width: 100%;
   max-width: 300px;
+  border-radius: 30px;
 }
 
-.profile-update__form{
+.profile-update__form {
   max-width: 400px;
   display: flex;
   flex-direction: column;
+}
+
+.pagination{
+  display: flex;
+  margin: auto;
+  min-width: 300px;
+}
+
+.pages {
+  display: flex;
+  margin: 0 auto;
+}
+
+.page__item {
+  padding: 5px 8px;
+  border: solid 1px;
+}
+.page__item:hover,
+.page__item:active,
+.page__item:focus {
+  background-color: #81B3D2;
+}
+
+.active{
+  background-color: #81B3D2;
+}
+
+.messages {
+  padding: 10px;
+}
+
+.message__name,
+.comment__name {
+  font-weight: bold;
+}
+
+.message__name_text,
+.comment__name_text {
+  font-weight: initial;
+}
+
+.page__item > .disabled {
+  cursor: inherit;
+  color: gray;
 }

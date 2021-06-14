@@ -4,7 +4,7 @@
 {% endblock  %}
 
 {% block content %}
-<h1>Избранные объявления</h1>
+  <h1>Избранные объявления</h1>
   <div class="cards">
     {% if add_posts %}    
       <ul class="posts">
@@ -18,12 +18,15 @@
               <p class="price">{{ post.price }} pуб.</p>
               <p class="text">{{ post.description | truncatewords:5 }}</p>
             </a>
+            <form class="form-delete" method="POST">
+              {% csrf_token %}
+              <input style="display: none;" type="text" name="post_id" value="{{ post.id }}">
+              <button class="button" type="submit" name="button_dell_post">Удалить избранное</button>
+            </form>
           </li>
           {% endwith %}
         {% endfor %}
       </ul>
     {% endif %}
-    </div>
-
-    
+  </div>
 {% endblock  %}

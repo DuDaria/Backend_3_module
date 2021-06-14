@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User 
 from django.utils import timezone
+from .validators import validate_birth_date
 
 
 def user_directory_path(instance, filename):
@@ -12,7 +13,7 @@ def user_avatar_path(instance, filename):
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='user_profile') 
-    birth_date = models.DateField(verbose_name='Дата рождения', blank=True, null=True)
+    birth_date = models.DateField(verbose_name='Дата рождения', blank=True, null=True, validators=[validate_birth_date])
     about = models.TextField(verbose_name="Информация о пользователе", blank=True, max_length=300)
     phone = models.CharField(verbose_name="Телефон", null=True, blank=True, max_length=50)
     avatar = models.ImageField(verbose_name="Фото пользователя", upload_to=user_avatar_path)
@@ -43,6 +44,9 @@ class Post(models.Model):
     
     def __str__(self):
         return f'Post: {self.name_descript}; {self.category}; Autor: {self.author}'
+
+    class Meta:
+        ordering=['-date_pub']
 
 
 class FavoritePost(models.Model):
@@ -79,9 +83,10 @@ class Message(models.Model):
     """Сообщение"""
     author = models.ForeignKey(Profile, on_delete=models.CASCADE, verbose_name="Автор сообщения")
     to_whom = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Кому сообщение")
+    in_post = models.ForeignKey(Post, on_delete=models.CASCADE, null=True)
     text = models.TextField(verbose_name="Сообщение", blank=True, max_length=300)
     date_pub = models.DateTimeField(default=timezone.now, verbose_name="Дата создания")
     date_edit = models.DateTimeField(default=timezone.now, verbose_name="Дата редактирования")
 
     def __str__(self):
-        return f'Autor: {self.author}; To whom: {self.to_whom}; Date_publish: {self.date_pub}'
+        return f'Author: {self.author}; To whom: {self.to_whom}; Date_publish: {self.date_pub}'

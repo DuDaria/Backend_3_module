@@ -22,22 +22,18 @@ urlpatterns = [
     path('post/<int:post_id>/delete_success/', TemplateView.as_view(
         template_name='advito/delete_success.html'
     ), name='post_delete_success'),
+    path('post/<int:post_id>/message/', views.PostCreateMessageView.as_view(), name='post_message'),
     
     
-
-
     # views_auth
 
     path('<int:user_id>/profile/', views_auth.ProfileView.as_view(), name='profile'), 
     path('<int:user_id>/profile/update', views_auth.UpdateProfileView.as_view(), name='profile_update'),
     path('<int:user_id>/profile/posts/', views_auth.profile_posts, name='profile_posts'),
-
-    path('<int:user_id>/profile/messages/', views_auth.profile_message, name='profile_message'),
+    path('<int:user_id>/profile/messages/', views_auth.ProfileMessageView.as_view(), name='profile_message'),
     # path('<int:user_id>/profile/messages/', views.MessageView.as_view(), name='profile_message'),
-    
-    path('<int:user_id>/profile/comments/', views_auth.profile_comment, name='profile_comment'),
-    # path('<int:user_id>/profile/comments/', views.CommentsPostView.as_view(), name='comments'),
-
+    path('<int:user_id>/profile/message_to/', views_auth.MessageToProfileView.as_view(), name='message_to_profile'),
+    path('<int:user_id>/profile/comments/', views_auth.ProfileCommentView.as_view(), name='profile_comment'),
     path('<int:user_id>/profile/posts/favorite', views.FavoritePostView.as_view(), name='favorite_post'),  
 
     path('login/', views_auth.Login.as_view(), name='login'),

@@ -18,6 +18,12 @@
   margin-bottom:20px
 }
 
+.post:hover,
+.post:active,
+.post:focus {
+  opacity: 0.7;
+}
+
 .signup-main {
   display:flex; 
   flex-direction:column; 
@@ -67,7 +73,6 @@
   margin-top: 20px;
 }
 
-
 .personal-info {
   width: 85%;
   margin: 0 auto;
@@ -92,8 +97,9 @@
   background-color: rgb(98, 150, 218);
   font-weight: bold;
   color: #ffffff;
-  max-width: 250px;
+  max-width: 200px;
   margin-bottom: 10px;
+  margin-top: 10px;
 }
 
 .message-button:hover, 

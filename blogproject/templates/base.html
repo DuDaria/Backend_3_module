@@ -105,6 +105,29 @@
         {% block content %}
         Ther is no any content
         {% endblock  %}
+        {% if is_paginated %}
+          <div class="pages">
+            <ul class="pagination">
+              <li class="page__item {% if not prev_url %} disabled {% endif %}">
+                <a class="pages__link pages__link_active" href="{{ prev_url }}" >Предыдущая</a>
+              </li>
+              {% for n in page_object.paginator.page_range %}
+                {% if page_object.number == n %}
+                    <li class="page__item active">
+                      <a class="pages__link" href="?page={{ n }}">{{ n }}</a>
+                    </li>
+                  {% elif n > page_object.number|add:-3 and n < page_object.number|add:3 %}
+                    <li class="page__item">
+                      <a class="pages__link" href="?page={{ n }}">{{ n }}</a>
+                    </li>
+                  {% endif %}
+              {% endfor %} 
+              <li class="page__item {% if not next_url %} disabled {% endif %}">
+                <a class="pages__link" href="{{ next_url }}">Следующая</a>
+              </li>
+            </ul>
+          </div>
+        {% endif %}
       </section>
     </main>
 

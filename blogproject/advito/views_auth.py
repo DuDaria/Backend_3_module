@@ -3,11 +3,12 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.shortcuts import render, get_object_or_404, redirect
-from django.views.generic import View, DetailView, UpdateView
+from django.views.generic import View, DetailView, UpdateView, ListView
 from django.http.response import Http404
 from django.contrib.auth.models import User
+from django.core.paginator import Paginator
 from .forms_auth import LoginForm, SignUpForm, UpdateProfileForm
-from .models import Profile, Post, CategoryPost
+from .models import Profile, Post, CategoryPost, Comment, Message
 
 
 class Login(LoginView):
@@ -68,7 +69,7 @@ class ProfileView(DetailView):
 
 
 class UpdateProfileView(UpdateView):
-    model = Profile #модель для обновления
+    model = Profile # модель для обновления
     form_class = UpdateProfileForm
     template_name = 'my_auth/profile_update.html'
     slug_field = "user_id"
@@ -87,25 +88,91 @@ class UpdateProfileView(UpdateView):
 
 
 def profile_posts(request, user_id):
-    categories= CategoryPost.objects.all()
+    posts = Post.objects.filter(author_id=user_id, date_pub__year=2021).order_by('-date_pub')
+    paginate_by = 6
+    paginator = Paginator(posts, paginate_by)
+    page_number = request.GET.get('page', 1)
+    page = paginator.get_page(page_number)
+    is_paginated = page.has_other_pages()
+    categories = CategoryPost.objects.all()
     template_name = 'advito/index.html'
-    profile_posts = Post.objects.filter(author_id=user_id, date_pub__year=2021).order_by('-date_pub')[:10]
+
+    if page.has_previous():
+            prev_url = '?page={}'.format(page.previous_page_number())
+    else:
+        prev_url = ''
+
+    if page.has_next():
+        next_url = '?page={}'.format(page.next_page_number())
+    else:
+        next_url = ''
+
+    context = {
+        'page_object': page,
+        'categories': categories,
+        'is_paginated': is_paginated,
+        'prev_url': prev_url,
+        'next_url': next_url,
+    }
     
-    context = {'categories':categories, 'posts': profile_posts}
     return render(request, template_name, context)
 
 
-def profile_message(request, user_id):
-    model = Profile
-    categories= CategoryPost.objects.all()
+class ProfileMessageView(ListView):
+    model = Message
+    categories = CategoryPost.objects.all()
     template_name = 'my_auth/profile_message.html'
-    
-    context = {'categories':categories, }
-    return render(request, template_name, context)
+    extra_context = {'categories':categories, }
+    context = {}
 
-def profile_comment(request, user_id):
-    categories= CategoryPost.objects.all()
+    def get(self, request, *args, **kwargs):
+        profile_id = request.user.user_profile.id
+        if self.request.user.is_authenticated:
+            messages = Message.objects.filter(
+                author=profile_id, 
+                date_pub__year=2021
+            ).order_by('-date_pub')
+
+            self.context['messages'] = messages
+        
+        return render(request, self.template_name, self.context)
+
+
+class ProfileCommentView(ListView):
+    model = Comment
+    categories = CategoryPost.objects.all()
     template_name = 'my_auth/profile_comment.html'
+    extra_context = {'categories':categories, }
+    context = {}
+
+    def get(self, request, *args, **kwargs):
+        user_id = request.user.id
+        if self.request.user.is_authenticated:
+            comments = Comment.objects.filter(
+                author_id=user_id, 
+                date_publish__year=2021
+            ).order_by('-date_publish')
+
+            self.context['comments'] = comments
+        
+        return render(request, self.template_name, self.context)
+
+
+class MessageToProfileView(ListView):
+    model = Message
+    categories= CategoryPost.objects.all()
+    template_name = 'my_auth/message_to_profile.html'
+    extra_context = {'categories':categories, }
+    context = {}
+
+    def get(self, request, *args, **kwargs):
+        user_id = request.user.id
+        if self.request.user.is_authenticated:
+            messages = self.model.objects.filter(
+                to_whom=user_id, 
+                date_pub__year=2021
+            ).order_by('-date_pub')
+            self.context['messages'] = messages
+        
+        return render(request, self.template_name, self.context)
     
-    context = {'categories':categories, }
-    return render(request, template_name, context)

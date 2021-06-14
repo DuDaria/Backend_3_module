@@ -17,9 +17,9 @@
       <p>Телефон: {{ profile.phone }}</p>
 
       {% if post.author != user %}
+        <p><a class="message-button" href="{% url 'advito:post_message' post.id %}">Написать сообщение</a></p>
         <form class="add-favorite__form" method="POST">
           {% csrf_token %}
-          <button class="message-button" type="submit" name="button_send_message">Написать сообщение</button><br>
           <button class="add-vaforite-button" type="submit" name="button_add_post">Добавить в избранное</button>
         </form>
       {% endif %}
@@ -27,7 +27,7 @@
       {% if post.author == user %}
         <p><a class="del-post-button" href="{% url 'advito:post_edit' post.id %}">Редактировать пост</a></p>
         <p><a class="del-post-button" href="{% url 'advito:post_delete' post.id %}">Удалить пост</a></p>
-    {% endif %}
+      {% endif %}
     </div>
   </div>
   {% if post.author != user %}
