@@ -234,34 +234,44 @@ class PostCreateMessageView(CreateView):
     extra_context = {'categories':categories, }
     form_class = MessageForm
     template_name = 'advito/post_message.html'
+    object = None
 
     def get(self, request, post_id, *args, **kwargs):
         self.object = self.get_object()
-        print(self.object)
         context = self.get_context_data(object=self.object)
-        context['author'] = self.object.author
         context['name_descript'] = self.object.name_descript
-
         if request.user.is_authenticated:
             context['message_form'] = self.form_class()
+
+        message_id = kwargs.get('message_id', None)
+        if not message_id:
+            context['author'] = self.object.author
+        else:
+            message = get_object_or_404(Message, id=message_id)
+            context['author'] = message.author
 
         return self.render_to_response(context)
 
     @method_decorator(login_required(login_url='/advito/login/'))
-    def post(self, request, post_id, *args, **kwargs):
-        post = get_object_or_404(Post, id=post_id)
+    def post(self, request, post_id, message_id=None, *args, **kwargs):
         form = self.form_class(request.POST)
         self.object = self.get_object()
-        author = self.object.author
         context = {}
         
         if form.is_valid():
             print("Форма валидна!")
             message = form.save(commit=False)
+            message.in_post = self.object
             message.author = request.user.user_profile
-            message.to_whom =self.object.author
+
+            if not message_id:
+                message.to_whom = self.object.author
+            else:
+                replied_message = get_object_or_404(Message, pk=message_id)
+                message.to_whom = replied_message.author.user
+
             message.save()
-            context['author'] = author
+            context['author'] = self.object.author
             context['message_was_created'] = True
         else:
             print("Форма не валидна")

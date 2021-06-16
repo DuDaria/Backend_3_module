@@ -50,6 +50,7 @@ img {
   display:flex; 
   background-color: #8DCFFF; 
   justify-content: space-between;
+  flex-wrap: wrap;
 }
 
 .navbar {
@@ -59,6 +60,7 @@ img {
 .navbar-nav {
   display:flex;
   align-self: center;
+  flex-wrap: wrap;
 }
 
 .nav-item {
@@ -81,6 +83,12 @@ img {
   border-bottom: solid 1px;
 }
 
+@media screen and (max-width: 500px) {
+  .index-form  {
+    flex-wrap: wrap;
+  }
+}
+
 .category, .form {
   margin-left: 20px;
 }
@@ -92,6 +100,7 @@ img {
 .username {
   display: flex;
   justify-content: flex-end;
+  flex-wrap: wrap;
   width: 100%;
 }
 
@@ -166,8 +175,8 @@ img {
 
 .pagination{
   display: flex;
+  flex-wrap: wrap;
   margin: auto;
-  min-width: 300px;
 }
 
 .pages {
