@@ -6,8 +6,9 @@
       <ul class="profile-comments">
         {% for comment in comments %}
           <li class="comment">
+            <p class="comment__name">Объявление: <i class="comment__name_text">{{ comment.in_post.name_descript }}</i>; 
+            Автор: <i>{{ comment.in_post.author }}</i></p>
             <p class="comment__name">Комментарий: <i class="comment__name_text">{{ comment.text }}</i></p>
-            <p class="comment__name">Объявление: <i class="comment__name_text">{{ comment.in_post.name_descript }}</i>; Автор: <i>{{ comment.in_post.author }}</i></p>
             <p class="comment__name">Дата отправления: <i class="comment__name_text">{{ comment.date_publish }}</i></p>
           </li>
           {% comment %} <form method="POST">
@@ -21,5 +22,5 @@
     {% else %}
       <i>Пока комментариев нет</i>
     {% endif %}
-  </div>
+    </div>
 {% endblock  %}

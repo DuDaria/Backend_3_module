@@ -8,8 +8,8 @@ from django.http.response import Http404
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 from .forms_auth import LoginForm, SignUpForm, UpdateProfileForm
-from .models import Profile, Post, CategoryPost, Comment, Message
-
+from .models import Profile, Post, CategoryPost, Comment, Message, Review
+from .views import paginate
 
 class Login(LoginView):
     template_name = 'my_auth/login.html'
@@ -42,7 +42,6 @@ class SignUpView(View):
     def get(self, request, *args, **kwargs):
         return render(request, self.template_name, context={'form': self.form_class()})
 
-    
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
         registered = False
@@ -96,16 +95,7 @@ def profile_posts(request, user_id):
     is_paginated = page.has_other_pages()
     categories = CategoryPost.objects.all()
     template_name = 'advito/index.html'
-
-    if page.has_previous():
-            prev_url = '?page={}'.format(page.previous_page_number())
-    else:
-        prev_url = ''
-
-    if page.has_next():
-        next_url = '?page={}'.format(page.next_page_number())
-    else:
-        next_url = ''
+    page, is_paginated, prev_url, next_url = paginate(posts, request)
 
     context = {
         'page_object': page,
@@ -134,6 +124,7 @@ class ProfileMessageView(ListView):
             ).order_by('-date_pub')
 
             self.context['messages'] = messages
+            self.context['categories'] = self.categories
         
         return render(request, self.template_name, self.context)
 
@@ -142,7 +133,6 @@ class ProfileCommentView(ListView):
     model = Comment
     categories = CategoryPost.objects.all()
     template_name = 'my_auth/profile_comment.html'
-    extra_context = {'categories':categories, }
     context = {}
 
     def get(self, request, *args, **kwargs):
@@ -154,6 +144,7 @@ class ProfileCommentView(ListView):
             ).order_by('-date_publish')
 
             self.context['comments'] = comments
+            self.context['categories'] = self.categories
         
         return render(request, self.template_name, self.context)
 
@@ -162,7 +153,6 @@ class MessageToProfileView(ListView):
     model = Message
     categories= CategoryPost.objects.all()
     template_name = 'my_auth/message_to_profile.html'
-    extra_context = {'categories':categories, }
     context = {}
 
     def get(self, request, *args, **kwargs):
@@ -172,7 +162,30 @@ class MessageToProfileView(ListView):
                 to_whom=user_id, 
                 date_pub__year=2021
             ).order_by('-date_pub')
+
             self.context['messages'] = messages
+            self.context['categories'] = self.categories
         
         return render(request, self.template_name, self.context)
+
+
+def profile_review(request, user_id):
+    model = Review
+    template_name = 'my_auth/profile_review.html'
+    context = {}
+    categories= CategoryPost.objects.all()
+    profile_review = model.objects.filter(author_id=request.user.user_profile.id).order_by('-date_pub')
     
+    context = {'categories': categories, 'reviews': profile_review,}
+    return render(request, template_name, context)
+
+
+def review_to_profile(request, user_id):
+    model = Review
+    template_name = 'my_auth/review_to_profile.html'
+    context = {}
+    categories= CategoryPost.objects.all()
+    review_to_profile = model.objects.filter(to_whom=user_id).order_by('-date_pub')
+    
+    context = {'categories': categories, 'reviews_to': review_to_profile,}
+    return render(request, template_name, context)

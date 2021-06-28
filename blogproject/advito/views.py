@@ -16,40 +16,52 @@ from .models import (Post, Comment, Profile,
     CategoryPost, FavoritePost, Review, Message
 )
 from .forms import (PostForm, CommentForm, 
-    MessageForm
+    MessageForm, ReviewForm
 )
+
+
+def users_counter():
+    users =  Profile.objects.all()
+    return len(users)
+
+
+def paginate(posts, request):
+    paginate_by = 6
+    paginator = Paginator(posts, paginate_by)
+    page_number = request.GET.get('page', 1)
+    page = paginator.get_page(page_number)
+    is_paginated = page.has_other_pages()
+
+    if page.has_previous():
+        prev_url = '?page={}'.format(page.previous_page_number())
+    else:
+        prev_url = ''
+
+    if page.has_next():
+        next_url = '?page={}'.format(page.next_page_number())
+    else:
+        next_url = ''
+
+    return page, is_paginated, prev_url, next_url
 
 
 class IndexView(ListView):
     posts = Post.objects.all()
-    paginate_by = 6
-    paginator = Paginator(posts, paginate_by)
     categories = CategoryPost.objects.all()
     model = Post 
     template_name = 'advito/index.html'
     context_object_name ='posts'
-    extra_context = {'categories':categories, }
-    # context = {}
+    users_counter = users_counter()
+    text = "Зарегистрировано: "
 
     def get(self, request):
-        page_number = request.GET.get('page', 1)
-        page = self.paginator.get_page(page_number)
-
-        is_paginated = page.has_other_pages()
-
-        if page.has_previous():
-            prev_url = '?page={}'.format(page.previous_page_number())
-        else:
-            prev_url = ''
-
-        if page.has_next():
-            next_url = '?page={}'.format(page.next_page_number())
-        else:
-            next_url = ''
+        page, is_paginated, prev_url, next_url = paginate(self.posts, request)
 
         context = {
             'page_object': page,
             'categories': self.categories,
+            'users_counter': users_counter,
+            'text': self.text,
             'is_paginated': is_paginated,
             'prev_url': prev_url,
             'next_url': next_url,
@@ -70,7 +82,7 @@ class PostDetailView(DetailView):
     pk_url_kwarg = 'post_id'
     template_name = 'advito/post_detail.html'
     comment_form_class = CommentForm
-    context={}
+    context = {}
     
     def get(self, request, post_id, *args, **kwargs):
         self.object = self.get_object()
@@ -103,7 +115,6 @@ class PostDetailView(DetailView):
                     post=post, 
                     author=request.user.user_profile
                 )
-                print(favpost_add)
                 return redirect(request.META.get('HTTP_REFERER'), request)
         else:
             print("Форма не валидна!")
@@ -197,28 +208,18 @@ class FavoritePostView(ListView):
 
 
 def category_post(request, category_id):
+    counter = users_counter()
     posts = Post.objects.filter(category=category_id, date_pub__year=2021)
-    paginate_by = 6
-    paginator = Paginator(posts, paginate_by)
-    page_number = request.GET.get('page', 1)
-    page = paginator.get_page(page_number)
-    is_paginated = page.has_other_pages()
     categories= CategoryPost.objects.all()
     template_name = 'advito/index.html'
-
-    if page.has_previous():
-            prev_url = '?page={}'.format(page.previous_page_number())
-    else:
-        prev_url = ''
-
-    if page.has_next():
-        next_url = '?page={}'.format(page.next_page_number())
-    else:
-        next_url = ''
-
+    text = "Зарегистрировано: "
+    page, is_paginated, prev_url, next_url = paginate(posts, request)
+    
     context = {
         'page_object': page,
         'categories': categories,
+        'text': text,
+        'users_counter': counter,
         'is_paginated': is_paginated,
         'prev_url': prev_url,
         'next_url': next_url,
@@ -279,4 +280,47 @@ class PostCreateMessageView(CreateView):
             context['form'] = form
         
         return render(request, self.template_name, context)
-        
+
+
+class ReviewCreateView(CreateView):
+    review_form_class = ReviewForm
+    model = Post 
+    pk_url_kwarg = 'post_id'
+    categories = CategoryPost.objects.all()
+    template_name = 'advito/review.html'
+    extra_context = { 'categories': categories, }
+    context = {}
+
+    
+    def get(self, request, post_id, *args, **kwargs):
+        self.object = self.get_object()
+        reviews = Review.objects.filter(to_whom=self.object.author).order_by('-date_pub')
+
+        self.context['reviews'] = reviews
+        self.context['author'] = self.object.author
+
+        if request.user.is_authenticated:
+            self.context['review_form'] = self.review_form_class()
+
+        return render(request, self.template_name, self.context)
+
+    def post(self, request, *args, **kwargs):
+        form = self.review_form_class(request.POST)
+        self.object = self.get_object()
+        rating = request.POST.get('rating')
+
+        if form.is_valid():
+            print("Форма валидна!")
+            review = form.save(commit=False)
+            review.to_whom_id = self.object.author.id
+            review.author_id = request.user.user_profile.id
+            review.rating = rating
+            review.save()
+            return redirect(request.META.get('HTTP_REFERER'), request)
+        else:
+            print("Форма не валидна!")
+            return render(request, self.template_name, context={
+                'review_form': self.review_form_class,
+                'reviews': Review.objects.filter(to_whom=self.object.author).order_by('-date_pub')
+            })
+            

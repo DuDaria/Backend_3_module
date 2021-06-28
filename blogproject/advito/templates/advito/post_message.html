@@ -3,12 +3,12 @@
   {% if user.is_authenticated %}
     <form class="message__form" method="POST">
       {% csrf_token %}
+      <h4>Кому: {{ author }}</h4>
+      <h4>Объявление: {{ name_descript }}</h4>
       {{ message_form.text }}<br>
       {% if message_was_created or message_with_errors %}
         <button class="button" style="display:none" type="submit">Отправить сообщение</button>
       {% else %}
-        <h3>Кому: {{ author }}:</h3>
-        <h4>Объявление: {{ name_descript }}:</h4>
         <button class="button" type="submit" name="button_send_message">Отправить сообщение</button>
       {% endif %}
     </form>
