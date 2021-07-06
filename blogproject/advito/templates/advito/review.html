@@ -9,12 +9,12 @@
           <ul>
             {% for review in reviews %}
               <li class="review">
-                <p class="review__name">Автор: <a href="#">{{ review.author }}</a></p>
-                <p class="review__name">Оценка:&nbsp<i class="stars">{{ review.rating }}</i></p>
+                <p class="review__name"><a href="#">{{ review.author }}</a></p>
+                <p class="review__name"><i class="stars">{{ review.rating }}</i></p>
                 {% if review.text %}
-                  <p class="review__name">Отзыв: <i class="review__name_text">{{ review.text }}</i></p>
+                  <p class="review__name"><i class="review__name_text">{{ review.text }}</i></p>
                 {% endif %}
-                <p class="review__name">Дата: <i class="review__name_text">{{ review.date_pub }}</i></p>
+                <p class="review__name"><i class="review__name_text">{{ review.date_pub }}</i></p>
                 <hr>
               </li>
             {% endfor %}

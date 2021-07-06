@@ -210,10 +210,14 @@
 }
 
 .message__name,
-.comment__name,
-.review__name {
+.comment__name {
   font-weight: bold;
   margin: 0 0 10px;
+}
+
+.review__name {
+  font-weight: bold;
+  margin: 0 0 5px;
 }
 
 .message__name_text,
@@ -272,4 +276,9 @@
 .success-list > input:focus ~ label {
   box-shadow: 0px 0px 0px 1.5px #79ABFE inset;
   border-radius: 2px;
+}
+
+.form_search {
+  display: flex;
+  margin-left: 20px;
 }

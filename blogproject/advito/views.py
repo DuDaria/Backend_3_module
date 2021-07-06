@@ -12,6 +12,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.core.paginator import Paginator
+from django.db.models import Q
 from .models import (Post, Comment, Profile, 
     CategoryPost, FavoritePost, Review, Message
 )
@@ -55,7 +56,16 @@ class IndexView(ListView):
     text = "Зарегистрировано: "
 
     def get(self, request):
-        page, is_paginated, prev_url, next_url = paginate(self.posts, request)
+        search_query = self.request.GET.get('q')
+        if search_query:
+            posts = Post.objects.filter(
+                Q(name_descript__icontains=search_query) 
+                | Q(description__icontains=search_query)
+            )
+        else:
+            posts = Post.objects.all()
+
+        page, is_paginated, prev_url, next_url = paginate(posts, request)
 
         context = {
             'page_object': page,
@@ -288,16 +298,15 @@ class ReviewCreateView(CreateView):
     pk_url_kwarg = 'post_id'
     categories = CategoryPost.objects.all()
     template_name = 'advito/review.html'
-    extra_context = { 'categories': categories, }
     context = {}
 
-    
     def get(self, request, post_id, *args, **kwargs):
         self.object = self.get_object()
         reviews = Review.objects.filter(to_whom=self.object.author).order_by('-date_pub')
 
         self.context['reviews'] = reviews
         self.context['author'] = self.object.author
+        self.context['categories'] = self.categories
 
         if request.user.is_authenticated:
             self.context['review_form'] = self.review_form_class()

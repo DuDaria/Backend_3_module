@@ -1,7 +1,6 @@
 console.log('Привет от JavaScript!');
 
 var stars = document.querySelectorAll('.stars');
-console.log(stars);
 
 $.fn.replaceText = function (e, f, g) {
     return this.each(function () {
